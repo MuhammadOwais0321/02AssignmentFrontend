@@ -3,7 +3,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import { Link, Navigate, redirect, useNavigate } from "react-router-dom";
 import FacebookButtton from "../components/FacebookButtton";
-import GoogleButton from "../components/GoogleButton";
+import GoogleButton from "./components/GoogleButton";
 
 const Signup = (props) => {
   const [signupFormData, setSignupFormData] = useState({

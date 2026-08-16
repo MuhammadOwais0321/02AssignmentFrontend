@@ -5,7 +5,7 @@ import { Link, Navigate, redirect, useNavigate } from "react-router-dom";
 import FacebookButtton from "../components/FacebookButtton";
 import GoogleButton from "../components/GoogleButton";
 import { toast, ToastContainer, Zoom } from "react-toastify";
-import { UseUser } from "../../context/UserContext";
+import { UseUser } from "./context/UserContext";
 
 const Login = (props) => {
   const { setUser } = UseUser();

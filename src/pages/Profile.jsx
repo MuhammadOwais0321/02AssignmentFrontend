@@ -3,7 +3,7 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { CiCirclePlus } from "react-icons/ci";
 import { toast, ToastContainer, Zoom } from "react-toastify";
 import Button from "../components/Button";
-import { UseUser } from "../../context/UserContext";
+import { UseUser } from "./context/UserContext";
 
 const Profile = (props) => {
   const { user } = UseUser();
