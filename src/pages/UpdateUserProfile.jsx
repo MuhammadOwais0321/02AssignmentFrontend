@@ -2,18 +2,18 @@ import { useState } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import { CiCirclePlus } from "react-icons/ci";
 import { toast, ToastContainer, Zoom } from "react-toastify";
-import Button from "../components/Button";
-import { UseUser } from "./context/UserContext";
-
+import Button from "../components/Button.jsx";
+import { useNavigate } from "react-router-dom";
+import { useRefreshToken } from "../myMethods.js";
 const Profile = (props) => {
-  const { user } = UseUser();
+  const navigate = useNavigate();
   const [userImage, setUserImage] = useState(false);
   const [profileFormData, setProfileFormData] = useState({
     first_name: "",
     last_name: "",
     phone: "",
   });
-  const Url = "http://localhost:3000/api/user/";
+  const Url = "http://localhost:3000/api/user/updateprofile";
 
   const [selectedDropdownvalue, setSelectedDropdownvalue] = useState("Male");
   const [address, setAddress] = useState("");
@@ -82,9 +82,33 @@ const Profile = (props) => {
   const handleTextarea = (e) => {
     setAddress(e.target.value);
   };
-  const formSubmitHandler = (e) => {
+  const formSubmitHandler = async (e) => {
     e.preventDefault();
-    const responce = fetch(`${Url}/${user._id}`);
+
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+
+    const responce = await fetch(`${Url}/${userId}`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        ...profileFormData,
+        gender: selectedDropdownvalue || "",
+        address: address || "",
+      }),
+    });
+
+    if (responce.status === 403) {
+      const data = await useRefreshToken();
+    }
+
+    const data = await responce.json();
+    if (data.success === true) {
+      navigate(`/userProfile/${localStorage.getItem('userId')}`);
+    }
   };
   return (
     <>

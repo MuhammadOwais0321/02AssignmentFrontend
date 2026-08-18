@@ -1,17 +1,17 @@
 import Signup from "./pages/Signup";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
-import Profile from "./pages/Profile";
-import { UseUser } from "../context/user.context.jsx";
+import UpdateUserProfile from "./pages/UpdateUserProfile";
+import UserProfile from "./pages/UserProfile";
 
 const App = (props) => {
-  const { user } = UseUser();
   return (
     <>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Signup />} />
-          <Route path={`/profile/${user._id}`} element={<Profile />} />
+          <Route path={`/UpdateUserProfile/:id`} element={<UpdateUserProfile />} />
+          <Route path={`/userProfile/:id`} element={<UserProfile />} />
           <Route path="/login" element={<Login />} />
         </Routes>
       </BrowserRouter>

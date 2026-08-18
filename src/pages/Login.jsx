@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import { Link, Navigate, redirect, useNavigate } from "react-router-dom";
+import { Link,  redirect, useNavigate } from "react-router-dom";
 import FacebookButtton from "../components/FacebookButtton";
 import GoogleButton from "../components/GoogleButton";
 import { toast, ToastContainer, Zoom } from "react-toastify";
-import { UseUser } from "./context/UserContext";
 
 const Login = (props) => {
-  const { setUser } = UseUser();
   const ForgotPasswordToast = () =>
     toast.info("Feature comming soon", {
       position: "top-center",
@@ -70,11 +68,11 @@ const Login = (props) => {
         throw new Error(data.message);
       }
       console.log(data);
-      setUser(data.user);
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.user._id);
 
-      navigate(`/profile/${data.user._id}`);
+      navigate(`/UpdateUserProfile/${data.user._id}`);
     } catch (error) {
       console.log(error);
 
