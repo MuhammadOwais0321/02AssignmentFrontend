@@ -1,9 +1,10 @@
 import React from "react";
 
-const Input = ({ value, type, placeholder,handleInputValue }) => {
+const Input = ({ value, type, placeholder,handleInputValue,required }) => {
   return (
     <>
       <input
+      required={required}
         type={type}
         placeholder={placeholder}
         value={value}

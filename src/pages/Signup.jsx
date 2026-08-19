@@ -4,6 +4,7 @@ import Button from "../components/Button";
 import { Link, Navigate, redirect, useNavigate } from "react-router-dom";
 import FacebookButtton from "../components/FacebookButtton";
 import GoogleButton from "../components/GoogleButton";
+import {  registererrorThrower } from "../helper/errorHandler";
 
 const Signup = (props) => {
   const [signupFormData, setSignupFormData] = useState({
@@ -22,18 +23,21 @@ const Signup = (props) => {
       placeholder: "Email",
       value: signupFormData.email,
       name: "UserEmail",
+      required: true,
     },
     {
       type: "password",
       placeholder: "Password",
       value: signupFormData.password,
       name: "UserPassword",
+      required: true,
     },
     {
       type: "text",
       placeholder: "Enter your Name",
       value: signupFormData.text,
       name: "UserName",
+      required: false,
     },
   ];
   const onChangeHandler = (e) => {
@@ -49,23 +53,29 @@ const Signup = (props) => {
     e.preventDefault();
     try {
       setErrmsg("");
+      if(signupFormData.password.length < 6 ){
+        return setErrmsg('minimum password length must be 6')
+      }
       const responce = await fetch(`${authUrl}signup`, {
-        method: "POST",
+        method: "post",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
         body: JSON.stringify(signupFormData),
       });
+
       const data = await responce.json();
-      if (!responce.ok) {
-        throw new Error(data.message);
-      }
-      console.log("success", data);
+
+        let errMsg = registererrorThrower(responce, data);
+            console.log(errMsg);
+            if(errMsg){
+              throw new Error(errMsg)
+            }
+    
+
       navigate("/login");
     } catch (error) {
-      console.log(error);
-
       setErrmsg(error.message);
     }
   };
@@ -83,6 +93,7 @@ const Signup = (props) => {
                 key={index}
                 type={data.type}
                 placeholder={data.placeholder}
+                required={data.required}
               />
             );
           })}
@@ -92,7 +103,7 @@ const Signup = (props) => {
             {errmsg}
           </p>
           <p>
-            Already have an account{' '}
+            Already have an account{" "}
             <Link className="text-blue-500 hover:text-blue-700" to={"/login"}>
               Login
             </Link>
@@ -103,12 +114,11 @@ const Signup = (props) => {
             Or
             <hr className="w-[40%]" />
           </div>
-<div className="space-y-2">
+          <div className="space-y-2">
+            <FacebookButtton />
 
-         <FacebookButtton/>
-         
-         <GoogleButton/>
-</div>
+            <GoogleButton />
+          </div>
         </div>
       </form>
     </div>

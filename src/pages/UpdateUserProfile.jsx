@@ -17,6 +17,7 @@ const Profile = (props) => {
 
   const [selectedDropdownvalue, setSelectedDropdownvalue] = useState("Male");
   const [address, setAddress] = useState("");
+  const [error, setError] = useState('');
 
   const uploadImageFailed = () =>
     toast.info("Feature comming soon", {
@@ -87,27 +88,41 @@ const Profile = (props) => {
 
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
+    try {
+      const responce = await fetch(`${Url}/${userId}`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...profileFormData,
+          gender: selectedDropdownvalue || "",
+          address: address || "",
+        }),
+      });
 
-    const responce = await fetch(`${Url}/${userId}`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        ...profileFormData,
-        gender: selectedDropdownvalue || "",
-        address: address || "",
-      }),
-    });
+      if (responce.status === 403) {
+        const data = await useRefreshToken();
+        // window.location.reload()
+      }
+      
+      const data = await responce.json();
+      if(!responce.ok){
+        console.log(data);
+        if(data.errors){
 
-    if (responce.status === 403) {
-      const data = await useRefreshToken();
-    }
-
-    const data = await responce.json();
-    if (data.success === true) {
-      navigate(`/userProfile/${localStorage.getItem('userId')}`);
+          const errKey = Object.keys(data.errors)
+          throw new Error(`${errKey[0]}: ${data.errors[errKey[0]]}`)
+        }
+        throw new Error(data.message)
+      }
+      console.log(data);
+      if (data.success === true) {
+        navigate(`/userProfile/${localStorage.getItem("userId")}`);
+      }
+    } catch (error) {
+      setError(error.message)
     }
   };
   return (
@@ -187,6 +202,7 @@ const Profile = (props) => {
             />
           </div>
           <Button type="submit" value="submit" />
+        {!error == '' ? <p className="text-red-600">{error}</p>: ''}
         </form>
       </div>
     </>

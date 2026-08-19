@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import { Link,  redirect, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import FacebookButtton from "../components/FacebookButtton";
 import GoogleButton from "../components/GoogleButton";
 import { toast, ToastContainer, Zoom } from "react-toastify";
+import { registererrorThrower } from "../helper/errorHandler";
 
 const Login = (props) => {
   const ForgotPasswordToast = () =>
@@ -34,12 +35,14 @@ const Login = (props) => {
       placeholder: "Email",
       value: loginFormData.email,
       name: "UserEmail",
+      required: true
     },
     {
       type: "password",
       placeholder: "Password",
       value: loginFormData.password,
       name: "UserPassword",
+       required: true
     },
   ];
   const onChangeHandler = (e) => {
@@ -64,10 +67,12 @@ const Login = (props) => {
         body: JSON.stringify(loginFormData),
       });
       const data = await responce.json();
-      if (!responce.ok) {
-        throw new Error(data.message);
+      let errMsg = registererrorThrower(responce, data);
+      console.log(errMsg);
+      if(errMsg){
+        throw new Error(errMsg)
       }
-      console.log(data);
+      
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.user._id);
@@ -93,6 +98,7 @@ const Login = (props) => {
                 key={index}
                 type={data.type}
                 placeholder={data.placeholder}
+                required={data.required}
               />
             );
           })}
